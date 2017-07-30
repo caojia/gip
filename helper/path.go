@@ -2,8 +2,8 @@ package helper
 
 import (
 	"os"
-	"path/filepath"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -25,5 +25,3 @@ func gitRemote(path string) (string, error) {
 	remote, err := c.Output()
 	return strings.TrimSpace(string(remote)), err
 }
-
-

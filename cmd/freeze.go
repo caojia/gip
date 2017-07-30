@@ -14,16 +14,8 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-	"strings"
-	"path/filepath"
-	"os"
-	"os/exec"
-	"log"
-	"go/build"
 	"github.com/caojia/gip/helper"
+	"github.com/spf13/cobra"
 )
 
 // freezeCmd represents the freeze command

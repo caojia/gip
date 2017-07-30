@@ -16,10 +16,11 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
 	"os/exec"
+
 	"github.com/caojia/gip/helper"
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 )
 
 // getCmd represents the get command

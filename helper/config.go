@@ -2,13 +2,14 @@ package helper
 
 import (
 	"fmt"
-	"github.com/caojia/gip/log"
-	"github.com/pkg/errors"
 	"go/build"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+
+	"github.com/caojia/gip/log"
+	"github.com/pkg/errors"
+	"gopkg.in/yaml.v2"
 )
 
 const configFile = "gip.yml"

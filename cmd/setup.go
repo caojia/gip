@@ -16,10 +16,11 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
 	"os/exec"
-	"github.com/caojia/gip/log"
 	"runtime"
+
+	"github.com/caojia/gip/log"
+	"github.com/spf13/cobra"
 )
 
 var direnvVersion = "v2.12.2"

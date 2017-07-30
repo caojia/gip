@@ -14,19 +14,20 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"errors"
+
 	"github.com/caojia/gip/helper"
 	"github.com/caojia/gip/log"
+	"github.com/spf13/cobra"
 )
 
 // installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install requirements.txt",
 	Short: "Install the dependencies from requirements file",
-	Long: `Install the dependencies from requirements file`,
+	Long:  `Install the dependencies from requirements file`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) <=0 {
+		if len(args) <= 0 {
 			return errors.New("please specify a requirements file.")
 		}
 		pkgs, err := helper.LoadPackagesFromFile(args[0])

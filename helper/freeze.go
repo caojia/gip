@@ -2,12 +2,13 @@ package helper
 
 import (
 	"fmt"
-	"github.com/caojia/gip/log"
 	"go/build"
 	"os"
 	"path/filepath"
-	"strings"
 	"sort"
+	"strings"
+
+	"github.com/caojia/gip/log"
 )
 
 type dir struct {

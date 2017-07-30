@@ -1,20 +1,21 @@
 package helper
 
 import (
-	"path/filepath"
-	"os/exec"
-	"os"
 	"errors"
+	"os"
+	"os/exec"
+	"path/filepath"
+
 	"github.com/caojia/gip/log"
 )
 
 func gitTryRemote(destPath, version string) (bool, error) {
-	c := exec.Command("git", "show-ref", "-q", "--verify", "refs/remote/origin/" + version)
+	c := exec.Command("git", "show-ref", "-q", "--verify", "refs/remote/origin/"+version)
 	c.Dir = destPath
 	_, err := c.Output()
 	if err == nil {
 		log.Debug("%s reset to origin/%s", destPath, version)
-		c := exec.Command("git", "reset", "--hard", "origin/" + version)
+		c := exec.Command("git", "reset", "--hard", "origin/"+version)
 		c.Dir = destPath
 		output, err := c.CombinedOutput()
 		if err != nil {

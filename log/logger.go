@@ -1,11 +1,13 @@
 package log
 
 import (
-	"github.com/fatih/color"
 	"fmt"
+
+	"github.com/fatih/color"
 )
 
 type Level int
+
 const (
 	D Level = 1
 	L Level = 2
@@ -26,7 +28,7 @@ func Debug(base string, args ...interface{}) {
 
 func Info(base string, args ...interface{}) {
 	if level <= L {
-		fmt.Printf(base + "\n", args...)
+		fmt.Printf(base+"\n", args...)
 	}
 }
 

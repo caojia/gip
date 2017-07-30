@@ -17,11 +17,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/caojia/gip/helper"
+	"github.com/caojia/gip/log"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/caojia/gip/log"
-	"github.com/caojia/gip/helper"
 )
 
 var cfgFile string
@@ -65,7 +65,7 @@ func Execute() {
 var verbose bool = false
 var ignoreGlobal bool = false
 
-func init() { 
+func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.

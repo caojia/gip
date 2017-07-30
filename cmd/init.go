@@ -16,11 +16,12 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
 	"errors"
-	"path/filepath"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+
+	"github.com/spf13/cobra"
 )
 
 var envrc = ".envrc"
