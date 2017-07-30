@@ -54,10 +54,16 @@ func LoadPackage(line string) (*Package, error) {
 	}
 	packageName := splits[1]
 
+	global := false
+	if p, ok := cfg.packagesMap[packageName]; ok {
+		global = p.Global
+	}
+
 	return &Package{
 		Package: packageName,
 		Repo:    repo,
 		Version: version,
+		Global:  global,
 	}, nil
 }
 
