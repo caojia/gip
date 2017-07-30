@@ -24,8 +24,7 @@ import (
 )
 
 var envrc = ".envrc"
-var template = `
-mkdir -p %[1]s
+var template = `mkdir -p %[1]s
 export GOPATH=%[1]s:$GOPATH
 `
 

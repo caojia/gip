@@ -15,7 +15,9 @@ gip要解决什么问题？
 gip怎么做
 ===
 
-参考了 [vg](https://github.com/GetStream/vg) 和 [gigo](https://github.com/LyricalSecurity/gigo) 的思路，gip想要实现的是python中 [pip](https://pypi.python.org/pypi/pip) 的组合，再配合[direnv](https://github.com/direnv/direnv)来实现GOPATH的切换
+参考了 [vg](https://github.com/GetStream/vg) 和 [gigo](https://github.com/LyricalSecurity/gigo) 的思路，gip想要实现的是python中 [pip](https://pypi.python.org/pypi/pip) 的组合，再配合[direnv](https://github.com/direnv/direnv)来实现GOPATH的切换。
+
+NOTE：大量借鉴了[vg](https://github.com/GetStream/vg) 的代码设计和实现。
 
 1. 每次进入一个项目，自动激活这个项目的GOPATH
 	- 依赖direnv实现；在项目根目录下准备.envrc文件，当进入该文件夹时，自动将配置的GOPATH加到默认GOPATH之前； 
@@ -24,6 +26,15 @@ gip怎么做
 
 使用方法
 ===
+
+0. 安装gip
+	
+	```
+	# install gip
+	go get -u github.com/caojia/gip
+	# setup of direnv
+	gip setup
+	```
 
 1. 初始化一个项目
 

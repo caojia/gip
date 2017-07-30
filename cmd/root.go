@@ -73,7 +73,7 @@ func init() {
 	// will be global for your application.
 	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gip.yaml)")
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode")
-	RootCmd.PersistentFlags().BoolVarP(&ignoreGlobal, "ignore-global", false, "if it is set to true, none of the packages will be installed in global GOPATH.")
+	RootCmd.PersistentFlags().BoolVar(&ignoreGlobal, "ignore-global", false, "if it is set to true, none of the packages will be installed in global GOPATH.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -112,6 +112,4 @@ func initConfig() {
 	if ignoreGlobal {
 		helper.IgnoreGlobal()
 	}
-
-	RootCmd.DebugFlags()
 }
