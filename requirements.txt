@@ -1,0 +1,17 @@
+https://github.com/fatih/color#62e9147c64a1ed519147b62a56a14e83e2be02c1,github.com/fatih/color
+https://github.com/fsnotify/fsnotify#4da3e2cfbabc9f751898f250b49f2439785783a1,github.com/fsnotify/fsnotify
+https://github.com/hashicorp/hcl#392dba7d905ed5d04a5794ba89f558b27e2ba1ca,github.com/hashicorp/hcl
+https://github.com/magiconair/properties#be5ece7dd465ab0765a9682137865547526d1dfb,github.com/magiconair/properties
+https://github.com/mitchellh/go-homedir#b8bc1bf767474819792c23f32d8286a45736f1c6,github.com/mitchellh/go-homedir
+https://github.com/mitchellh/mapstructure#d0303fe809921458f417bcf828397a65db30a7e4,github.com/mitchellh/mapstructure
+https://github.com/pelletier/go-toml#69d355db5304c0f7f809a2edc054553e7142f016,github.com/pelletier/go-toml
+https://github.com/pkg/errors#c605e284fe17294bda444b34710735b29d1a9d90,github.com/pkg/errors
+https://github.com/spf13/afero#9be650865eab0c12963d8753212f4f9c66cdcf12,github.com/spf13/afero
+https://github.com/spf13/cast#acbeb36b902d72a7a4c18e8f3241075e7ab763e4,github.com/spf13/cast
+https://github.com/spf13/cobra#34594c771f2c18301dc152640ad40ece28795373,github.com/spf13/cobra
+https://github.com/spf13/jwalterweatherman#0efa5202c04663c757d84f90f5219c1250baf94f,github.com/spf13/jwalterweatherman
+https://github.com/spf13/pflag#e57e3eeb33f795204c1ca35f56c44f83227c6e66,github.com/spf13/pflag
+https://github.com/spf13/viper#25b30aa063fc18e48662b86996252eabdcf2f0c7,github.com/spf13/viper
+https://github.com/golang/sys#a646d33e2ee3172a661fc09bca23bb4889a41bc8,golang.org/x/sys
+https://github.com/golang/text#836efe42bb4aa16aaa17b9c155d8813d336ed720,golang.org/x/text
+https://gopkg.in/yaml.v2#25c4ec802a7d637f88d584ab26798e94ad14c13b,gopkg.in/yaml.v2

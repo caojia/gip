@@ -1,0 +1,7 @@
+imports:
+  - package: golang.org/x/sys
+    repo: https://github.com/golang/sys
+    version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
+  - package: golang.org/x/text
+    repo: https://github.com/golang/text
+    version: 836efe42bb4aa16aaa17b9c155d8813d336ed720

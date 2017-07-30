@@ -20,6 +20,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/caojia/gip/log"
 )
 
 var cfgFile string
@@ -27,13 +28,24 @@ var cfgFile string
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "gip",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "A simple tool to manage the dependency of a go project.",
+	Long: `A simple tool to manage the dependency of a go project.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Examples:
+	# install the requirements first
+	gip install requirements.txt
+
+	# use normal gip to install packages, $options and $pkg will pass to go get
+	gip get -- $options $pkg
+
+	# or specify the git clone url
+	gip get github.com/golang/net#master,golang.org/x/net
+
+	# coding, coding, coding
+
+	# before push, generate the requirements.txt and commit it
+	gip freeze > requirements.txt
+	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -55,6 +67,11 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gip.yaml)")
+	verbose := false
+	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode")
+	if verbose {
+		log.SetLevel(log.D)
+	}
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

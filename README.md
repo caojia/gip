@@ -37,8 +37,8 @@ gip怎么做
 	# install the requirements first
 	gip install requirements.txt
 	
-	# use normal gip to install packages
-	gip get $pkg
+	# use normal gip to install packages, $options and $pkg will pass to go get
+	gip get -- $options $pkg
 	# or specify the git clone url
 	gip get github.com/golang/net#master,golang.org/x/net
 	
@@ -46,4 +46,17 @@ gip怎么做
 	
 	# before push, generate the requirements.txt and commit it
 	gip freeze > requirements.txt
+	```
+	
+3. 指定版本和repo地址
+
+	可以在当前gip.yaml中配置某些package的指定版本和repo地址
+	
+	例如：
+	
+	```
+	imports:
+		- package: golang.org/x/net
+		  repo: https://github.com/golang/net
+		  version: master
 	```

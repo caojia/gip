@@ -23,6 +23,7 @@ import (
 	"os/exec"
 	"log"
 	"go/build"
+	"github.com/caojia/gip/helper"
 )
 
 // freezeCmd represents the freeze command
@@ -31,17 +32,21 @@ var freezeCmd = &cobra.Command{
 	Short: "Output installed packages in requirements format.",
 	Long: `Output installed packages in requirements format.
 Only packages installed and depenced directly or indirectly by current package will be output.
+packages are listed in a case-insensitive sorted order.
 
-packages are listed in a case-insensitive sorted order.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := build.Default
-		wd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
-		fmt.Println(wd)
-		dfs(ctx, wd)
-		return nil
+Edit gip.yml if the git repo or version of a package need customized.
+
+Example of gip.yml:
+
+	imports:
+		- package: golang.org/x/net
+		  repo: https://github.com/golang/net
+		  version: master
+
+`,
+
+	Run: func(cmd *cobra.Command, args []string) {
+		helper.Freeze()
 	},
 }
 
@@ -50,19 +55,24 @@ type dir struct {
 	parent string
 }
 
-type repo struct {
+type Package struct {
+	// package name
+	Package string
 	// repo url
-	url string
+	Repo    string
 	// commit hash
-	commit string
+	Version string
 	// contains vendor dir
-	vendor bool
+	Vendor  bool
+	// isSelf
+	Self    bool
 }
 
+var wd string = ""
 var packages map[string]bool = make(map[string]bool)
-var repos map[string]repo = make(map[string]repo)
+var repos map[string]Package = make(map[string]Package)
 
-func findRepo(srcPath, p string) repo {
+func findRepo(srcPath, p string) Package {
 	folders := strings.Split(p, string(filepath.Separator))
 	base := ""
 	for _, f := range folders {
@@ -70,21 +80,29 @@ func findRepo(srcPath, p string) repo {
 		if r, ok := repos[base]; ok {
 			return r
 		}
+		if strings.HasSuffix(wd, base) {
+			r := Package{ Self: true, }
+			if f, _ := os.Stat(filepath.Join(srcPath, base, "vendor")); f != nil && f.IsDir() {
+				r.Vendor = true
+			}
+			repos[base] = r
+			return r
+		}
 		if f, _ := os.Stat(filepath.Join(srcPath, base, ".git")); f != nil && f.IsDir() {
 			output, err := exec.Command("git", "-C", filepath.Join(srcPath, base), "remote", "get-url", "origin").Output()
 			if err != nil {
-				panic(fmt.Sprintf("ooops, unsupported cvs, pkg=%s, err=%s", p, err.Error()))
+				log.Printf(fmt.Sprintf("[WARNING] unsupported cvs, pkg=%s, err=%s", p, err.Error()))
 			}
 			commit, err := exec.Command("git", "-C", filepath.Join(srcPath, base), "rev-parse", "HEAD").Output()
 			if err != nil {
 				log.Printf("[WARNING] got error while getting commit hash: %s\n", err.Error())
 			}
-			r := repo{
-				url:    strings.Trim(string(output), "\n"),
-				commit: strings.Trim(string(commit), "\n"),
+			r := Package{
+				Repo:    strings.Trim(string(output), "\n"),
+				Version: strings.Trim(string(commit), "\n"),
 			}
 			if f, _ := os.Stat(filepath.Join(srcPath, base, "vendor")); f != nil && f.IsDir() {
-				r.vendor = true
+				r.Vendor = true
 			}
 			repos[base] = r
 			return r
@@ -106,7 +124,7 @@ func recursive(ctx build.Context, dir string, parent string) {
 		if strings.Contains(x, ".") {
 			packages[x] = true
 			r := findRepo(p.SrcRoot, x)
-			if !r.vendor {
+			if !r.Vendor {
 				recursive(ctx, filepath.Join(p.SrcRoot, x), dir)
 			}
 		}
