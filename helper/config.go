@@ -15,6 +15,7 @@ const configFile = "gip.yml"
 
 var cfg config
 var srcPath string
+var globalSrcPath string
 var srcPaths []string = make([]string, 0)
 
 // Package
@@ -26,6 +27,8 @@ type Package struct {
 	Repo string `yaml:"repo"`
 	// commit hash
 	Version string `yaml:"version"`
+	// isGlobal, install the package in global path
+	Global bool `yaml:"global"`
 	// contains vendor dir
 	Vendor bool
 	// isSelf
@@ -74,6 +77,10 @@ func LoadPackagesFromFile(filename string) ([]*Package, error) {
 	return pkgs, nil
 }
 
+func IgnoreGlobal() {
+	globalSrcPath = srcPath
+}
+
 // Config
 // define the structure of a config file: gip.yaml
 type config struct {
@@ -87,6 +94,10 @@ func init() {
 		srcPaths[i] = filepath.Join(s, "src")
 	}
 	srcPath = srcPaths[0]
+	globalSrcPath = srcPaths[0]
+	if len(srcPaths) > 1 {
+		globalSrcPath = srcPaths[1]
+	}
 	content, err := ioutil.ReadFile(configFile)
 	if err != nil {
 		log.Debug("fail to read the file, err=%s", err.Error())

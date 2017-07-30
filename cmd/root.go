@@ -21,6 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/caojia/gip/log"
+	"github.com/caojia/gip/helper"
 )
 
 var cfgFile string
@@ -55,23 +56,24 @@ Examples:
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
+		RootCmd.DebugFlags()
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
+var verbose bool = false
+var ignoreGlobal bool = false
+
 func init() { 
-	//cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gip.yaml)")
-	verbose := false
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose mode")
-	if verbose {
-		log.SetLevel(log.D)
-	}
+	RootCmd.PersistentFlags().BoolVarP(&ignoreGlobal, "ignore-global", false, "if it is set to true, none of the packages will be installed in global GOPATH.")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -102,4 +104,14 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+
+	if verbose {
+		log.SetLevel(log.D)
+	}
+
+	if ignoreGlobal {
+		helper.IgnoreGlobal()
+	}
+
+	RootCmd.DebugFlags()
 }

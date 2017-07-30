@@ -50,7 +50,7 @@ func init() {
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// installCmd.PersistentFlags().String("foo", "", "A help for foo")
+	installCmd.PersistentFlags().Bool("ignore-global", false, "if it is set to true, none of the packages will be installed in global GOPATH.")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:

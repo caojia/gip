@@ -13,7 +13,9 @@
 
 package main
 
-import "github.com/caojia/gip/cmd"
+import (
+	"github.com/caojia/gip/cmd"
+)
 
 func main() {
 	cmd.Execute()

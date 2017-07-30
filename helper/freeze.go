@@ -44,14 +44,6 @@ func findRepo(src, p string) (Package, error) {
 			repos[base] = r
 			return r, nil
 		}
-		if r, ok := cfg.packagesMap[base]; ok {
-			if f, _ := os.Stat(filepath.Join(src, base, "vendor")); f != nil && f.IsDir() {
-				r.Vendor = true
-			}
-			r.Package = base
-			repos[base] = r
-			return r, nil
-		}
 		fullpath := filepath.Join(src, base)
 		if isGitDir(fullpath) {
 			remote, err := gitRemote(fullpath)
@@ -69,6 +61,15 @@ func findRepo(src, p string) (Package, error) {
 			}
 			if f, _ := os.Stat(filepath.Join(src, base, "vendor")); f != nil && f.IsDir() {
 				r.Vendor = true
+			}
+			if cachedR, ok := cfg.packagesMap[base]; ok {
+				if len(cachedR.Repo) > 0 {
+					r.Repo = cachedR.Repo
+				}
+				if len(cachedR.Version) > 0 {
+					r.Version = cachedR.Version
+				}
+				r.Global = cachedR.Global
 			}
 			repos[base] = r
 			return r, nil

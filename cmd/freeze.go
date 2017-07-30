@@ -41,9 +41,10 @@ Example of gip.yml:
 	imports:
 		- package: golang.org/x/net
 		  repo: https://github.com/golang/net
+		- package: xxx/x/x
+		  repo: an internal url
 		  version: master
-
-`,
+		  global: true`,
 
 	Run: func(cmd *cobra.Command, args []string) {
 		helper.Freeze()
