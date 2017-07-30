@@ -87,7 +87,11 @@ func recursive(ctx build.Context, dir string, parent string) {
 	if err != nil {
 		return
 	}
-	for _, x := range p.Imports {
+	imports := p.Imports
+	if parent == "" {
+		imports = append(imports, p.TestImports...)
+	}
+	for _, x := range imports {
 		if strings.Contains(x, ".") {
 			packages[x] = true
 			r, err := findRepo(p.SrcRoot, x)
