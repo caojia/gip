@@ -15,9 +15,10 @@ gip要解决什么问题？
 gip怎么做
 ===
 
-参考了 [vg](https://github.com/GetStream/vg) 和 [gigo](https://github.com/LyricalSecurity/gigo) 的思路，gip想要实现的是python中 [virtualenv](https://virtualenv.pypa.io/en/stable/) + [pip](https://pypi.python.org/pypi/pip) 的组合。
+参考了 [vg](https://github.com/GetStream/vg) 和 [gigo](https://github.com/LyricalSecurity/gigo) 的思路，gip想要实现的是python中 [pip](https://pypi.python.org/pypi/pip) 的组合，再配合[direnv](https://github.com/direnv/direnv)来实现GOPATH的切换
 
 1. 每次进入一个项目，自动激活这个项目的GOPATH
+	- 依赖direnv实现；在项目根目录下准备.envrc文件，当进入该文件夹时，自动将配置的GOPATH加到默认GOPATH之前； 
 2. 有一个requirements.txt，记录依赖的go package以及这些package对应的下载地址（现在只支持git）
 3. 提供freeze方法（类似 ```pip freeze```），输出现有的依赖库以及版本
 
@@ -27,7 +28,7 @@ gip怎么做
 1. 初始化一个项目
 
 	```
-	# Just initialize a new GOPATH
+	# Just initialize a new envrc, which will set an isolated GOPATH
 	gip init $name
 	```
 
@@ -58,5 +59,13 @@ gip怎么做
 	imports:
 		- package: golang.org/x/net
 		  repo: https://github.com/golang/net
+		- package: xxx/x/x
+		  repo: an internal url
 		  version: master
+		  global: true
 	```
+	
+gip.yml说明
+===
+
+gip会自动读取当前目录下的gip.yml文件，该文件可以配置任意依赖包的下载地址、版本以及是否下载到全局依赖。
