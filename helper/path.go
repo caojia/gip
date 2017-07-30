@@ -13,12 +13,16 @@ func isGitDir(path string) bool {
 }
 
 func gitCommit(path string) (string, error) {
-	commit, err := exec.Command("git", "-C", path, "rev-parse", "HEAD").Output()
+	c := exec.Command("git", "rev-parse", "HEAD")
+	c.Dir = path
+	commit, err := c.Output()
 	return strings.TrimSpace(string(commit)), err
 }
 
 func gitRemote(path string) (string, error) {
-	remote, err := exec.Command("git", "-C", path, "remote", "get-url", "origin").Output()
+	c := exec.Command("git", "remote", "get-url", "origin")
+	c.Dir = path
+	remote, err := c.Output()
 	return strings.TrimSpace(string(remote)), err
 }
 
