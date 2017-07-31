@@ -30,8 +30,12 @@ NOTE：大量借鉴了[vg](https://github.com/GetStream/vg) 的代码设计和�
 0. 安装gip
 	
 	```
-	# install gip
+	# install gip;
 	go get -u github.com/caojia/gip
+	
+	# you can also download gip from directly from releases page
+	# https://github.com/caojia/gip/releases
+	
 	# setup of direnv
 	gip setup
 	```
