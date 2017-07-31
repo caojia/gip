@@ -22,6 +22,8 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"os/exec"
+	"github.com/caojia/gip/log"
 )
 
 var envrc = ".envrc"
@@ -49,6 +51,10 @@ export GOPATH=~/.gip/gip:$GOPATH`,
 		path := filepath.Join("~/.gip", args[0])
 		content := fmt.Sprintf(template, path)
 		ioutil.WriteFile(envrc, []byte(content), os.ModePerm)
+		output, err := exec.Command("direnv", "allow", ".").CombinedOutput()
+		if err != nil {
+			log.Error(string(output))
+		}
 		return nil
 	},
 }
