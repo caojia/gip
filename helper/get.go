@@ -10,7 +10,7 @@ import (
 )
 
 func gitTryRemote(destPath, version string) (bool, error) {
-	c := exec.Command("git", "show-ref", "-q", "--verify", "refs/remote/origin/"+version)
+	c := exec.Command("git", "show-ref", "-q", "--verify", "refs/remotes/origin/"+version)
 	c.Dir = destPath
 	_, err := c.Output()
 	if err == nil {
