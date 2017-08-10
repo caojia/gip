@@ -85,6 +85,9 @@ func findRepo(src, p string) (Package, error) {
 func recursive(ctx build.Context, dir string, parent string) {
 	p, err := ctx.ImportDir(dir, build.IgnoreVendor)
 	if err != nil {
+		if !strings.Contains(err.Error(), "no buildable Go source files") {
+			log.Debug("got err: %s, dir=%s, parent=%s", err.Error(), dir, parent)
+		}
 		return
 	}
 	imports := p.Imports
@@ -94,11 +97,17 @@ func recursive(ctx build.Context, dir string, parent string) {
 	for _, x := range imports {
 		if strings.Contains(x, ".") {
 			packages[x] = true
-			r, err := findRepo(p.SrcRoot, x)
-			if err != nil {
+			srcRoot := p.SrcRoot
+			var r Package
+			if srcRoot != "" {
+				r, err = findRepo(p.SrcRoot, x)
+			}
+			// if srcRoot is empty, lookup the repo again
+			if err != nil || srcRoot == "" {
 				for _, src := range srcPaths {
 					r, err = findRepo(src, x)
 					if err == nil {
+						srcRoot = src
 						break
 					}
 				}
@@ -107,7 +116,7 @@ func recursive(ctx build.Context, dir string, parent string) {
 				panic(err)
 			}
 			if !r.Vendor {
-				recursive(ctx, filepath.Join(p.SrcRoot, x), dir)
+				recursive(ctx, filepath.Join(srcRoot, x), dir)
 			}
 		}
 	}
