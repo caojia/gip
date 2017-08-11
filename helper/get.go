@@ -44,11 +44,32 @@ func Get(pkg *Package) error {
 	}
 	destPath := filepath.Join(src, pkg.Package)
 	if isGitDir(destPath) {
-		log.Debug("fetching origin: %s", destPath)
-		// update the git
-		c := exec.Command("git", "fetch", "origin")
-		c.Dir = destPath
-		c.Output()
+		needFetch := false
+		// check is remote, if it is remote, always fetch origin
+		remote, err := gitTryRemote(destPath, pkg.Version)
+		if remote {
+			if err != nil {
+				return err
+			}
+			needFetch = true
+		}
+
+		// if it is not remote, check if the hash already checked out
+		if !needFetch {
+			err := gitCheckout(destPath, pkg.Version)
+			if err != nil {
+				needFetch = true
+			}
+		}
+
+		// if need fetch origin, fetch it
+		if needFetch {
+			log.Debug("fetching origin: %s", destPath)
+			// update the git
+			c := exec.Command("git", "fetch", "origin")
+			c.Dir = destPath
+			c.Output()
+		}
 	} else {
 		log.Debug("cloning: %s", destPath)
 		os.MkdirAll(destPath, os.ModePerm)
@@ -57,6 +78,7 @@ func Get(pkg *Package) error {
 			return errors.New(string(output))
 		}
 	}
+
 	if len(pkg.Version) > 0 {
 		// the version is a remote branch
 		remote, err := gitTryRemote(destPath, pkg.Version)

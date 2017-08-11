@@ -92,6 +92,7 @@ func IgnoreGlobal() {
 // define the structure of a config file: gip.yaml
 type config struct {
 	Imports     []Package `yaml:imports`
+	WhiteLists  map[string]string `yaml:white_lists`
 	packagesMap map[string]Package
 }
 
