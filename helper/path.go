@@ -8,8 +8,7 @@ import (
 )
 
 func isGitDir(path string) bool {
-	f, _ := os.Stat(filepath.Join(path, ".git"))
-	return f != nil && f.IsDir()
+	return isDir(filepath.Join(path, ".git"))
 }
 
 func gitCommit(path string) (string, error) {
@@ -24,4 +23,9 @@ func gitRemote(path string) (string, error) {
 	c.Dir = path
 	remote, err := c.Output()
 	return strings.TrimSpace(string(remote)), err
+}
+
+func isDir(path string) bool {
+	f, _ := os.Stat(path)
+	return f != nil && f.IsDir()
 }

@@ -34,6 +34,8 @@ type Package struct {
 	Vendor bool
 	// isSelf
 	Self bool
+	// SrcPath
+	SrcPath string
 }
 
 func (p Package) String() string {

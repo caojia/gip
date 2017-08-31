@@ -17,7 +17,6 @@ type dir struct {
 }
 
 var wd string = ""
-var packages map[string]bool = make(map[string]bool)
 var repos map[string]Package = make(map[string]Package)
 
 func init() {
@@ -28,7 +27,11 @@ func init() {
 	}
 }
 
-func findRepo(src, p string) (Package, error) {
+func findRepo(src, p string, ignoreCache bool) (Package, error) {
+	if ignoreCache && isDir(filepath.Join(src, p)) {
+		return Package{}, nil
+	}
+
 	folders := strings.Split(p, string(filepath.Separator))
 	base := ""
 	for _, f := range folders {
@@ -42,7 +45,11 @@ func findRepo(src, p string) (Package, error) {
 				r.Vendor = true
 			}
 			r.Package = base
-			repos[base] = r
+			r.SrcPath = wd[0:len(wd) - len(base)]
+			if !ignoreCache {
+				repos[base] = r
+			}
+
 			return r, nil
 		}
 		fullpath := filepath.Join(src, base)
@@ -72,7 +79,10 @@ func findRepo(src, p string) (Package, error) {
 				}
 				r.Global = cachedR.Global
 			}
-			repos[base] = r
+			r.SrcPath = src
+			if !ignoreCache {
+				repos[base] = r
+			}
 			return r, nil
 		}
 	}
@@ -82,7 +92,7 @@ func findRepo(src, p string) (Package, error) {
 // Traverse the packages and figure out the dependency recursively.
 // if the package contains vendor, we assume it already solve the dependencies.
 // so we don't look into it any more
-func recursive(ctx build.Context, dir string, parent string) {
+func recursive(ctx build.Context, dir string, parent string, lastPackage *Package) {
 	p, err := ctx.ImportDir(dir, build.IgnoreVendor)
 	if err != nil {
 		if !strings.Contains(err.Error(), "no buildable Go source files") {
@@ -96,27 +106,33 @@ func recursive(ctx build.Context, dir string, parent string) {
 	}
 	for _, x := range imports {
 		if strings.Contains(x, ".") {
-			packages[x] = true
 			srcRoot := p.SrcRoot
 			var r Package
-			if srcRoot != "" {
-				r, err = findRepo(p.SrcRoot, x)
-			}
-			// if srcRoot is empty, lookup the repo again
-			if err != nil || srcRoot == "" {
-				for _, src := range srcPaths {
-					r, err = findRepo(src, x)
-					if err == nil {
-						srcRoot = src
-						break
-					}
+			parentIsVendor := lastPackage != nil && lastPackage.Vendor
+			if parentIsVendor {
+				r, err = findRepo(filepath.Join(lastPackage.SrcPath, lastPackage.Package, "vendor"), x, true)
+				if err == nil {
+					continue
 				}
 			}
-			if err != nil {
-				panic(err)
+			for _, src := range srcPaths {
+				r, err = findRepo(src, x, false)
+				if err == nil {
+					srcRoot = r.SrcPath
+					break
+				}
 			}
-			if !r.Vendor {
-				recursive(ctx, filepath.Join(srcRoot, x), dir)
+
+			if err != nil {
+				if !parentIsVendor {
+					panic(err)
+				}
+				continue
+			}
+
+
+			if !(parentIsVendor && r.Vendor) {
+				recursive(ctx, filepath.Join(srcRoot, x), dir, &r)
 			}
 		}
 	}
@@ -139,7 +155,7 @@ func bfs(ctx build.Context, path string) {
 			log.Debug("fail to open file %s, err = %s", base, err.Error())
 			continue
 		}
-		recursive(ctx, base, "")
+		recursive(ctx, base, "", nil)
 		subFiles, err := file.Readdirnames(-1)
 		if err != nil {
 			log.Debug("fail to get dir names %s, err = %s", base, err.Error())
