@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/caojia/gip/log"
+	"time"
 )
 
 type dir struct {
@@ -18,6 +19,7 @@ type dir struct {
 
 var wd string = ""
 var repos map[string]Package = make(map[string]Package)
+var visitedPackage map[string]bool = make(map[string]bool)
 
 func init() {
 	var err error = nil
@@ -93,6 +95,11 @@ func findRepo(src, p string, ignoreCache bool) (Package, error) {
 // if the package contains vendor, we assume it already solve the dependencies.
 // so we don't look into it any more
 func recursive(ctx build.Context, dir string, parent string, lastPackage *Package) {
+	ts := time.Now()
+	defer func() {
+		elapsed := time.Now().UnixNano() - ts.UnixNano()
+		log.Debug("dir=%s, parent=%s, es=%d", dir, parent, elapsed)
+	}()
 	p, err := ctx.ImportDir(dir, build.IgnoreVendor)
 	if err != nil {
 		if !strings.Contains(err.Error(), "no buildable Go source files") {
@@ -106,6 +113,9 @@ func recursive(ctx build.Context, dir string, parent string, lastPackage *Packag
 	}
 	for _, x := range imports {
 		if strings.Contains(x, ".") {
+			if visitedPackage[x] {
+				continue
+			}
 			srcRoot := p.SrcRoot
 			var r Package
 			parentIsVendor := lastPackage != nil && lastPackage.Vendor
@@ -114,6 +124,7 @@ func recursive(ctx build.Context, dir string, parent string, lastPackage *Packag
 				if err == nil {
 					continue
 				}
+				log.Debug("fail to get repo: %s, dir=%s err=%s", x, dir, err.Error())
 			}
 			for _, src := range srcPaths {
 				r, err = findRepo(src, x, false)
@@ -130,6 +141,7 @@ func recursive(ctx build.Context, dir string, parent string, lastPackage *Packag
 				continue
 			}
 
+			visitedPackage[x] = true
 
 			if !(parentIsVendor && r.Vendor) {
 				recursive(ctx, filepath.Join(srcRoot, x), dir, &r)
