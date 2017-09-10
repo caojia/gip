@@ -26,6 +26,16 @@ func gitTryRemote(destPath, version string) (bool, error) {
 	return false, nil
 }
 
+func gitStash(destPath string) error {
+	c := exec.Command("git", "stash")
+	c.Dir = destPath
+	output, err := c.CombinedOutput()
+	if err != nil {
+		return errors.New(string(output))
+	}
+	return nil
+}
+
 func gitCheckout(destPath, version string) error {
 	log.Debug("%s checking out %s", destPath, version)
 	c := exec.Command("git", "checkout", version)
@@ -44,6 +54,7 @@ func Get(pkg *Package) error {
 	}
 	destPath := filepath.Join(src, pkg.Package)
 	if isGitDir(destPath) {
+		gitStash(destPath)
 		needFetch := false
 		// check is remote, if it is remote, always fetch origin
 		remote, err := gitTryRemote(destPath, pkg.Version)
