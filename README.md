@@ -80,7 +80,21 @@ NOTE：大量借鉴了[vg](https://github.com/GetStream/vg) 的代码设计和�
 		  global: true
 	```
 	
+4. 如果某个依赖库，本地做了修改，gip 会先做```git stash```；所以如果发现本地修改丢失，可以通过 ```git stash list``` 和 ```git reflog``` 来找回。
+	
 gip.yml说明
 ===
 
 gip会自动读取当前目录下的gip.yml文件，该文件可以配置任意依赖包的下载地址、版本以及是否下载到全局依赖。
+
+配置说明：
+
+| Key        | Description           | 
+| ------------- | -------------| 
+| package      | package name |
+| repo      | where to fetch the package, e.g. if a package is blocked by gfw, push it to your internal git host, and set the **repo** to the new address. |
+| version | if it's a branch name, gip will always install the latest commit of that branch; default is empty |
+| global | if it's true, gip will install it in the default GOPATH, otherwise, it will be installed in the path where _.envrc_ sets; default it false |
+
+
+
