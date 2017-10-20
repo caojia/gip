@@ -118,13 +118,14 @@ func recursive(ctx build.Context, dir string, parent string, lastPackage *Packag
 			}
 			srcRoot := p.SrcRoot
 			var r Package
-			parentIsVendor := lastPackage != nil && lastPackage.Vendor
+			// Parent is vendor, means current package is under vendor directory
+			parentIsVendor := lastPackage != nil && lastPackage.Vendor && !strings.HasPrefix(x, lastPackage.Package)
 			if parentIsVendor {
 				r, err = findRepo(filepath.Join(lastPackage.SrcPath, lastPackage.Package, "vendor"), x, true)
 				if err == nil {
 					continue
 				}
-				log.Debug("fail to get repo: %s, dir=%s err=%s", x, dir, err.Error())
+				log.Debug("fail to get repo: %s, dir=%s err=%s, lastPackage=%v, srcRoot=%s", x, dir, err.Error(), lastPackage, srcRoot)
 			}
 			for _, src := range srcPaths {
 				r, err = findRepo(src, x, false)
