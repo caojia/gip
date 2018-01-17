@@ -4,9 +4,8 @@ import (
 	"errors"
 	"os"
 	"os/exec"
-	"path/filepath"
-
 	"github.com/caojia/gip/log"
+	"path"
 )
 
 func gitTryRemote(destPath, version string) (bool, error) {
@@ -47,12 +46,40 @@ func gitCheckout(destPath, version string) error {
 	return nil
 }
 
-func Get(pkg *Package) error {
-	src := srcPath
-	if pkg.Global {
-		src = globalSrcPath
+func getRequirementsForPackage(pkg *Package, requirementFile string) ([]*Package, error) {
+	realPath := pkg.RealPath()
+	filepath := path.Join(realPath, requirementFile)
+	if isFile(filepath) {
+		return LoadPackagesFromFile(filepath)
 	}
-	destPath := filepath.Join(src, pkg.Package)
+	return nil, nil
+}
+
+func GetRecursively(pkgs []*Package, requirementFile string) {
+	allPackages := pkgs
+	visitedPackage := map[string]bool{}
+	for i := 0; i < len(allPackages); i++ {
+		p := allPackages[i]
+		if visitedPackage[p.Package] {
+			continue
+		}
+		if err := Get(p); err != nil {
+			log.Error("get %s failed: err=%s", p.Package, err.Error())
+		}
+		visitedPackage[p.Package] = true
+
+		np, err := getRequirementsForPackage(p, requirementFile)
+		if err != nil {
+			log.Error("get requirements for %s failed: err=%s", p.Package, err.Error())
+			continue
+		}
+		allPackages = append(allPackages, np...)
+	}
+}
+
+func Get(pkg *Package) error {
+	destPath := pkg.RealPath()
+	log.Info("Getting %s, repo: %s, path: %s", pkg.Package, pkg.Repo, destPath)
 	if isGitDir(destPath) {
 		gitStash(destPath)
 		needFetch := false

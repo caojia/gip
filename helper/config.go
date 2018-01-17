@@ -42,6 +42,14 @@ func (p Package) String() string {
 	return fmt.Sprintf("%s#%s,%s", p.Repo, p.Version, p.Package)
 }
 
+func (p Package) RealPath() string {
+	src := srcPath
+	if p.Global {
+		src = globalSrcPath
+	}
+	return filepath.Join(src, p.Package)
+}
+
 func LoadPackage(line string) (*Package, error) {
 	splits := strings.SplitN(strings.TrimSpace(line), ",", 2)
 	if len(splits) < 2 {

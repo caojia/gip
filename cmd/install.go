@@ -17,7 +17,6 @@ import (
 	"errors"
 
 	"github.com/caojia/gip/helper"
-	"github.com/caojia/gip/log"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +24,7 @@ import (
 var installCmd = &cobra.Command{
 	Use:   "install requirements.txt",
 	Short: "Install the dependencies from requirements file",
-	Long:  `Install the dependencies from requirements file`,
+	Long:  `Install the dependencies from requirements file，gip will look up [requirements.txt] and install dependencies recursively.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) <= 0 {
 			return errors.New("please specify a requirements file.")
@@ -34,12 +33,7 @@ var installCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		for _, p := range pkgs {
-			err := helper.Get(p)
-			if err != nil {
-				log.Error("get %s failed: err=%s", p.Package, err.Error())
-			}
-		}
+		helper.GetRecursively(pkgs, args[0])
 		return nil
 	},
 }

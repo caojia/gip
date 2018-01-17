@@ -29,3 +29,8 @@ func isDir(path string) bool {
 	f, _ := os.Stat(path)
 	return f != nil && f.IsDir()
 }
+
+func isFile(path string) bool {
+	f, _ := os.Stat(path)
+	return f != nil && !f.IsDir()
+}

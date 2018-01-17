@@ -24,6 +24,11 @@ NOTE：大量借鉴了[vg](https://github.com/GetStream/vg) 的代码设计和�
 2. 有一个requirements.txt，记录依赖的go package以及这些package对应的下载地址（现在只支持git）
 3. 提供freeze方法（类似 ```pip freeze```），输出现有的依赖库以及版本
 
+**关于循环依赖**
+
+* 当项目的依赖库也是gip管理的时候，gip会递归找到所有gip管理的依赖包进行按照。
+* 使用**BFS**进行遍历依赖包；如果有重复依赖产生冲突，会以首次被遍历到的依赖包版本为准。
+
 使用方法
 ===
 
