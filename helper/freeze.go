@@ -110,6 +110,7 @@ func recursive(ctx build.Context, dir string, parent string, lastPackage *Packag
 	imports := p.Imports
 	if parent == "" {
 		imports = append(imports, p.TestImports...)
+		imports = append(imports, p.XTestImports...)
 	}
 	for _, x := range imports {
 		if strings.Contains(x, ".") {
